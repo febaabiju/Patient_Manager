@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Patient - Patient Management System</title>
+  <!-- Bootstrap 5 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <!-- Custom Medical Theme CSS -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+  <!-- Top Navigation Header -->
+  <nav class="navbar navbar-custom navbar-dark">
+    <div class="container">
+      <a class="navbar-brand d-flex align-items-center" href="{{ url_for('index') }}">
+        <span class="brand-icon">
+          <i class="bi bi-hospital fs-4 text-white"></i>
+        </span>
+        <span>Patient Management System</span>
+      </a>
+      <a href="{{ url_for('index') }}" class="btn btn-outline-light btn-sm">
+        <i class="bi bi-arrow-left me-1"></i> Back to Dashboard
+      </a>
+    </div>
+  </nav>
+
+  <!-- Main Container -->
+  <main class="container my-4 my-md-5">
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-4">
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show shadow-sm" role="alert">
+              <i class="bi bi-exclamation-triangle-fill me-2"></i>
+              <strong>{{ message }}</strong>
+              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <div class="row justify-content-center">
+      <div class="col-lg-7 col-md-9">
+
+        <div class="card card-custom">
+          <div class="card-header-custom d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-2">
+              <i class="bi bi-pencil-square text-primary fs-5"></i>
+              <h5 class="mb-0 fw-bold">Edit Patient Details</h5>
+            </div>
+            <span class="badge-patient-id">{{ patient.patient_id }}</span>
+          </div>
+
+          <div class="card-body p-4">
+            <form action="{{ url_for('edit_patient', patient_id=patient.patient_id) }}" method="POST">
+
+              <!-- Field 1: Patient ID (Readonly) -->
+              <div class="mb-3">
+                <label for="patient_id" class="form-label fw-semibold">Patient ID</label>
+                <div class="input-group">
+                  <span class="input-group-text bg-light"><i class="bi bi-card-heading text-muted"></i></span>
+                  <input type="text" class="form-control bg-light" id="patient_id" name="patient_id" value="{{ patient.patient_id }}" readonly>
+                </div>
+                <div class="form-text text-muted">Patient ID is the permanent unique record identifier.</div>
+              </div>
+
+              <!-- Field 2: Patient Name -->
+              <div class="mb-3">
+                <label for="name" class="form-label fw-semibold">
+                  Patient Name <span class="text-danger">*</span>
+                </label>
+                <div class="input-group">
+                  <span class="input-group-text"><i class="bi bi-person text-muted"></i></span>
+                  <input type="text" class="form-control" id="name" name="name" value="{{ patient.name }}" required maxlength="100">
+                </div>
+              </div>
+
+              <div class="row g-3 mb-4">
+                <!-- Field 3: Age -->
+                <div class="col-md-6">
+                  <label for="age" class="form-label fw-semibold">
+                    Age <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-calendar-event text-muted"></i></span>
+                    <input type="number" class="form-control" id="age" name="age" min="1" max="150" value="{{ patient.age }}" required>
+                  </div>
+                </div>
+
+                <!-- Field 4: Blood Group -->
+                <div class="col-md-6">
+                  <label for="blood_group" class="form-label fw-semibold">
+                    Blood Group <span class="text-danger">*</span>
+                  </label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-droplet-half text-danger"></i></span>
+                    <select class="form-select" id="blood_group" name="blood_group" required>
+                      {% for bg in blood_groups %}
+                        <option value="{{ bg }}" {% if bg == patient.blood_group %}selected{% endif %}>{{ bg }}</option>
+                      {% endfor %}
+                    </select>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Actions -->
+              <div class="d-flex justify-content-between align-items-center pt-3 border-top">
+                <a href="{{ url_for('index') }}" class="btn btn-outline-secondary px-3">
+                  <i class="bi bi-x-lg me-1"></i> Cancel
+                </a>
+                <button type="submit" class="btn btn-primary-med px-4">
+                  <i class="bi bi-check2-circle me-1"></i> Update Patient
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Footer -->
+  <footer class="text-center">
+    <div class="container">
+      <p class="mb-0">
+        <strong>Patient Management System</strong> &bull; Powered by Flask, SQLite, Docker & Nginx
+      </p>
+    </div>
+  </footer>
+
+  <!-- Bootstrap 5 Bundle JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+</html>

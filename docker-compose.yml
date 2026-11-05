@@ -1,0 +1,39 @@
+services:
+  web:
+    build: .
+    container_name: patient_flask_app
+    restart: unless-stopped
+    environment:
+      - DB_DIR=/app/data
+      - FLASK_SECRET_KEY=patient-secret-key-medical-app-2026
+    volumes:
+      - patient_db_data:/app/data
+    networks:
+      patient_network:
+        aliases:
+          - web
+          - flask
+          - patient_flask_app
+    expose:
+      - "5000"
+
+  nginx:
+    image: nginx:alpine
+    container_name: patient_nginx_server
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/default.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - web
+    networks:
+      - patient_network
+
+volumes:
+  patient_db_data:
+    driver: local
+
+networks:
+  patient_network:
+    driver: bridge
